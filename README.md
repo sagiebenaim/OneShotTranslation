@@ -9,10 +9,10 @@ To train autoencoder for both MNIST and SVHN:
 python main_autoencoder.py
 
 To train OST for MNIST to SVHN:
-python main_mnist_to_svhn.py --pretrained_g=True --save_models_and_samples=True --use_augmentation=False --one_way_cycle=True --freeze_shared=False
+python ./mnist_to_svhn/main_mnist_to_svhn.py --pretrained_g=True --save_models_and_samples=True --use_augmentation=True --one_way_cycle=True --freeze_shared=False
 
 To train OST for SVHN to MNIST:
-python main_svhn_to_mnist.py --pretrained_g=True --save_models_and_samples=True --use_augmentation=False --one_way_cycle=True --freeze_shared=False
+python ./mnist_to_svhn/main_svhn_to_mnist.py --pretrained_g=True --save_models_and_samples=True --use_augmentation=True --one_way_cycle=True --freeze_shared=False
 
 ## Drawing and Style Transfer Tasks
 

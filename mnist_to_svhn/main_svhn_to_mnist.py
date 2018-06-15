@@ -2,7 +2,7 @@ import argparse
 import logging
 import os
 
-from data_loader import get_loader
+from mnist_to_svhn.data_loader import get_loader
 from torch.backends import cudnn
 
 from mnist_to_svhn.solver_svhn_to_mnist import Solver

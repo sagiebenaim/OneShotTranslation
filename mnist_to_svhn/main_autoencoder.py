@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from solver_autoencoder import Solver
+from mnist_to_svhn.solver_autoencoder import Solver
 from torch.backends import cudnn
 
 from mnist_to_svhn.data_loader import get_loader
