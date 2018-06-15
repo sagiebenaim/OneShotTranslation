@@ -6,7 +6,7 @@ Requirements:
 2. Python 3.6
 
 To train autoencoder for both MNIST and SVHN:
-python main_autoencoder.py
+python ./mnist_to_svhn/main_autoencoder.py
 
 To train OST for MNIST to SVHN:
 python ./mnist_to_svhn/main_mnist_to_svhn.py --pretrained_g=True --save_models_and_samples=True --use_augmentation=True --one_way_cycle=True --freeze_shared=False
