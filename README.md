@@ -1,6 +1,6 @@
 # Implementation of One-Shot Unsupervised Cross Domain Translation
 
-## MNIST-to-SVHN and SVHN-to-MNIST OST
+## MNIST-to-SVHN and SVHN-to-MNIST
 Requirements:
 1. Pytorch 0.4
 2. Python 3.6
