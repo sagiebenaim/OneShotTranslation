@@ -6,8 +6,8 @@ import torch
 from torch import optim
 from torch.autograd import Variable
 
-from mnist_to_svhn.model import D1, D2
-from mnist_to_svhn.model import G11
+from model import D1, D2
+from model import G11
 
 
 class Solver(object):
@@ -39,7 +39,6 @@ class Solver(object):
         self.d2_load_path = os.path.join(config.load_path, "d2-" + str(config.load_iter) + ".pkl")
         self.build_model()
 
-
     def build_model(self):
         """Builds a generator and a discriminator."""
         self.g11 = G11(conv_dim=self.g_conv_dim)
@@ -51,24 +50,25 @@ class Solver(object):
         self.d1 = D1(conv_dim=self.d_conv_dim, use_labels=False)
         self.d2 = D2(conv_dim=self.d_conv_dim, use_labels=False)
 
-        self.d_optimizer = optim.Adam(list(self.d1.parameters()) + list(self.d2.parameters()), self.lr, [self.beta1, self.beta2])
-        
+        self.d_optimizer = optim.Adam(list(self.d1.parameters()) + list(self.d2.parameters()), self.lr,
+                                      [self.beta1, self.beta2])
+
         if torch.cuda.is_available():
             self.g11.cuda()
             self.d1.cuda()
             self.d2.cuda()
-    
+
     def merge_images(self, sources, targets, k=10):
         _, _, h, w = sources.shape
         row = int(np.sqrt(self.batch_size)) + 1
-        merged = np.zeros([3, row*h, row*w*2])
+        merged = np.zeros([3, row * h, row * w * 2])
         for idx, (s, t) in enumerate(zip(sources, targets)):
             i = idx // row
             j = idx % row
-            merged[:, i*h:(i+1)*h, (j*2)*h:(j*2+1)*h] = s
-            merged[:, i*h:(i+1)*h, (j*2+1)*h:(j*2+2)*h] = t
+            merged[:, i * h:(i + 1) * h, (j * 2) * h:(j * 2 + 1) * h] = s
+            merged[:, i * h:(i + 1) * h, (j * 2 + 1) * h:(j * 2 + 2) * h] = t
         return merged.transpose(1, 2, 0)
-    
+
     def to_var(self, x, volatile=False):
         """Converts numpy to variable."""
         if torch.cuda.is_available():
@@ -80,7 +80,7 @@ class Solver(object):
     def to_no_grad_var(self, x):
         x = self.to_data(x, no_numpy=True)
         return self.to_var(x, volatile=True)
-    
+
     def to_data(self, x, no_numpy=False):
         """Converts variable to numpy."""
         if torch.cuda.is_available():
@@ -88,7 +88,7 @@ class Solver(object):
         if no_numpy:
             return x.data
         return x.data.numpy()
-    
+
     def reset_grad(self):
         """Zeros the gradient buffers."""
         self.unshared_optimizer.zero_grad()
@@ -109,20 +109,20 @@ class Solver(object):
         svhn_iter = iter(self.svhn_loader)
         mnist_iter = iter(self.mnist_loader)
         iter_per_epoch = min(len(svhn_iter), len(mnist_iter))
-        
+
         # fixed mnist and svhn for sampling
         svhn_fixed_data, svhn_fixed_labels = svhn_iter.next()
         mnist_fixed_data, mnist_fixed_labels = mnist_iter.next()
         fixed_mnist = self.to_var(mnist_fixed_data)
         counter = 0
-        
-        for step in range(self.train_iters+1):
+
+        for step in range(self.train_iters + 1):
 
             # reset data_iter for each epoch
-            if (step+1) % iter_per_epoch == 0:
+            if (step + 1) % iter_per_epoch == 0:
                 mnist_iter = iter(self.mnist_loader)
                 svhn_iter = iter(self.svhn_loader)
-            
+
             # load svhn and mnist dataset
             svhn_data, s_labels_data = svhn_iter.next()
             mnist_data, m_labels_data = mnist_iter.next()
@@ -142,7 +142,7 @@ class Solver(object):
                     mnist_iter = iter(self.mnist_loader)
                     counter = 0
 
-            #============ train D ============#
+            # ============ train D ============#
             # train with real images
             self.reset_grad()
             out = self.d1(mnist)
@@ -174,7 +174,7 @@ class Solver(object):
             d_fake_loss.backward()
             self.d_optimizer.step()
 
-            #============ train G ============#
+            # ============ train G ============#
 
             # train mnist-svhn-mnist cycle
             self.reset_grad()
@@ -208,20 +208,20 @@ class Solver(object):
                 es = self.g11.encode(svhn, svhn=True)
                 fake_es = self.g11.decode(es, svhn=True)
                 g_loss = torch.mean((svhn - fake_es) ** 2)
-                g_loss += self.kl_lambda*self._compute_kl(es)
+                g_loss += self.kl_lambda * self._compute_kl(es)
 
                 g_loss.backward()
                 self.g_optimizer.step()
 
             # print the log info
-            if (step+1) % self.log_step == 0:
+            if (step + 1) % self.log_step == 0:
                 print('Step [%d/%d], d_real_loss: %.4f, d_mnist_loss: %.4f, d_svhn_loss: %.4f, '
                       'd_fake_loss: %.4f, g_loss: %.4f'
-                      %(step+1, self.train_iters, d_real_loss.data[0], d_mnist_loss.data[0],
-                        d_svhn_loss.data[0], d_fake_loss.data[0], g_loss.data[0]))
+                      % (step + 1, self.train_iters, d_real_loss.data[0], d_mnist_loss.data[0],
+                         d_svhn_loss.data[0], d_fake_loss.data[0], g_loss.data[0]))
 
             # save the sampled images
-            if (step+1) % self.sample_step == 0:
+            if (step + 1) % self.sample_step == 0:
                 em = self.g11.encode(fixed_mnist)
                 fake_svhn_var = self.g11.decode(em, svhn=True)
                 fake_svhn = self.to_data(fake_svhn_var)
@@ -231,11 +231,11 @@ class Solver(object):
                     scipy.misc.imsave(path, merged)
                     print('saved %s' % path)
 
-            if (step+1) % self.config.num_iters_save_model_and_return == 0:
+            if (step + 1) % self.config.num_iters_save_model_and_return == 0:
                 # save the model parameters for each epoch
                 if self.config.save_models_and_samples:
-                    g11_path = os.path.join(self.model_path, 'g11-%d.pkl' %(step+1))
-                    d1_path = os.path.join(self.model_path, 'd1-%d.pkl' %(step+1))
+                    g11_path = os.path.join(self.model_path, 'g11-%d.pkl' % (step + 1))
+                    d1_path = os.path.join(self.model_path, 'd1-%d.pkl' % (step + 1))
                     d2_path = os.path.join(self.model_path, 'd2-%d.pkl' % (step + 1))
                     torch.save(self.g11.state_dict(), g11_path)
                     torch.save(self.d1.state_dict(), d1_path)

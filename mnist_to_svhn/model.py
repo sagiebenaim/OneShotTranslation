@@ -10,6 +10,7 @@ def deconv(c_in, c_out, k_size, stride=2, pad=1, bn=True):
         layers.append(nn.BatchNorm2d(c_out))
     return nn.Sequential(*layers)
 
+
 def conv(c_in, c_out, k_size, stride=2, pad=1, bn=True):
     """Custom convolutional layer for simplicity."""
     layers = []
@@ -18,8 +19,8 @@ def conv(c_in, c_out, k_size, stride=2, pad=1, bn=True):
         layers.append(nn.BatchNorm2d(c_out))
     return nn.Sequential(*layers)
 
-class G11(nn.Module):
 
+class G11(nn.Module):
     def __init__(self, conv_dim=64):
         super(G11, self).__init__()
 
@@ -100,8 +101,8 @@ class G11(nn.Module):
         return list(self.deconv2_svhn.parameters()) + list(self.conv1_svhn.parameters()) + \
                list(self.deconv2.parameters()) + list(self.conv1.parameters())
 
-class G22(nn.Module):
 
+class G22(nn.Module):
     def __init__(self, conv_dim=64):
         super(G22, self).__init__()
 
@@ -181,6 +182,7 @@ class G22(nn.Module):
     def unshared_parameters(self):
         return list(self.deconv2_mnist.parameters()) + list(self.conv1_mnist.parameters()) + \
                list(self.deconv2.parameters()) + list(self.conv1.parameters())
+
 
 class D1(nn.Module):
     """Discriminator for mnist."""

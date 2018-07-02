@@ -1,7 +1,7 @@
 import torch
 from torchvision import datasets
 from torchvision import transforms
-from PIL import Image
+
 
 def get_loader(config):
     """Builds and returns Dataloader for MNIST and SVHN dataset."""
