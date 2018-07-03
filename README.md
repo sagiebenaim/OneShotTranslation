@@ -23,7 +23,7 @@ python main_svhn_to_mnist.py --pretrained_g=True --save_models_and_samples=True 
 
 ## Drawing and Style Transfer Tasks
 
-### Train Autoencoder:
+### Train Autoencoder
 
 To train autoencoder for facades (in drawing_and_style_transfer folder):
 python train.py --dataroot=./datasets/facades/trainB --name=facades_autoencoder --model=autoencoder --dataset_mode=single --no_dropout --n_downsampling=2 --num_unshared=2
@@ -31,7 +31,7 @@ python train.py --dataroot=./datasets/facades/trainB --name=facades_autoencoder 
 In the reverse direction (images of facades):
 python train.py --dataroot=./datasets/facades/trainA --name=facades_autoencoder_reverse --model=autoencoder --dataset_mode=single --no_dropout --n_downsampling=2 --num_unshared=2
 
-### Train OST:
+### Train OST
 
 To train OST for images to facades:
 python train.py --dataroot=./datasets/facades/ --name=facades_ost --load_dir=facades_autoencoder --model=ost --no_dropout --n_downsampling=2 --num_unshared=2 --start=0 --max_items_A=1
@@ -41,7 +41,7 @@ python train.py --dataroot=./datasets/facades/ --name=facades_ost_reverse --load
 
 To visualize losses: run python -m visdom.server
 
-### Test OST:
+### Test OST
 
 To test OST for images to facades:
 python test.py --dataroot=./datasets/facades/ --name=facades_ost --model=ost --no_dropout --n_downsampling=2 --num_unshared=2 --start=0 --max_items_A=1
