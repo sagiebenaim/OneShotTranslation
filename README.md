@@ -23,6 +23,12 @@ python main_svhn_to_mnist.py --pretrained_g=True --save_models_and_samples=True 
 
 ## Drawing and Style Transfer Tasks
 
+### Download Dataset
+
+To download dataset (in drawing_and_style_transfer folder):
+bash datasets/download_cyclegan_dataset.sh $DATASET_NAME
+where DATASET_NAME is one of (facades, cityscapes, maps, monet2photo, summer2winter_yosemite)
+
 ### Train Autoencoder
 
 To train autoencoder for facades (in drawing_and_style_transfer folder):
