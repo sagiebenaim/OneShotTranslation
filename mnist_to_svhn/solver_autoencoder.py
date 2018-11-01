@@ -110,7 +110,7 @@ class Solver(object):
             # train with real images
             self.reset_grad()
 
-            fake_mnist = self.g11.forward(mnist)
+            fake_mnist = self.g22.forward(mnist, mnist=True)
             out = self.d1(fake_mnist)
             d1_loss = torch.mean((out - 1) ** 2)
 
@@ -121,7 +121,7 @@ class Solver(object):
 
             # train with fake images
             self.reset_grad()
-            fake_mnist = self.g11.forward(mnist)
+            fake_mnist = self.g22.forward(mnist, mnist=True)
             out = self.d1(fake_mnist)
             d2_loss = torch.mean(out ** 2)
 
@@ -131,11 +131,11 @@ class Solver(object):
 
             # ============ train G ============
             self.reset_grad()
-            fake_mnist = self.g11.forward(mnist)
+            fake_mnist = self.g22.forward(mnist, mnist=True)
             out = self.d1(fake_mnist)
             g_loss = torch.mean((out - 1) ** 2)
             g_loss += torch.mean((mnist - fake_mnist) ** 2)
-            em = self.g11.encode(mnist)
+            em = self.g22.encode(mnist, mnist=True)
             g_loss += self.kl_lambda * self._compute_kl(em)
 
             g_loss.backward()
@@ -150,7 +150,7 @@ class Solver(object):
 
             # save the sampled images
             if (step + 1) % self.sample_step == 0:
-                fake_mnist = self.g11.forward(fixed_mnist)
+                fake_mnist = self.g22.forward(fixed_mnist, mnist=True)
                 mnist, fake_mnist = self.to_data(fixed_mnist), self.to_data(fake_mnist)
 
                 merged = self.merge_images(mnist, fake_mnist)
@@ -160,9 +160,9 @@ class Solver(object):
 
             if (step + 1) % 10000 == 0:
                 # save the model parameters for each epoch
-                g11_path = os.path.join(self.model_path, 'g11-%d.pkl' % (step + 1))
+                g22_path = os.path.join(self.model_path, 'g22-%d.pkl' % (step + 1))
                 d1_path = os.path.join(self.model_path, 'd1-%d.pkl' % (step + 1))
-                torch.save(self.g11.state_dict(), g11_path)
+                torch.save(self.g22.state_dict(), g22_path)
                 torch.save(self.d1.state_dict(), d1_path)
 
         # Train autoencoder for svhn
@@ -180,7 +180,7 @@ class Solver(object):
             # train with real images
             self.reset_grad()
 
-            fake_svhn = self.g22.forward(svhn)
+            fake_svhn = self.g11.forward(svhn, svhn=True)
             out = self.d2(fake_svhn)
             d2_loss = torch.mean((out - 1) ** 2)
 
@@ -192,7 +192,7 @@ class Solver(object):
             # train with fake images
             self.reset_grad()
 
-            fake_svhn = self.g22.forward(svhn)
+            fake_svhn = self.g11.forward(svhn, svhn=True)
             out = self.d2(fake_svhn)
             d1_loss = torch.mean(out ** 2)
 
@@ -203,11 +203,11 @@ class Solver(object):
             # ============ train G ============#
 
             self.reset_grad()
-            fake_svhn = self.g22.forward(svhn)
+            fake_svhn = self.g11.forward(svhn, svhn=True)
             out = self.d2(fake_svhn)
             g_loss = torch.mean((out - 1) ** 2)
             g_loss += torch.mean((svhn - fake_svhn) ** 2)
-            es = self.g22.encode(svhn)
+            es = self.g11.encode(svhn, svhn=True)
             g_loss += self.kl_lambda * self._compute_kl(es)
 
             g_loss.backward()
@@ -222,7 +222,7 @@ class Solver(object):
 
             # save the sampled images
             if (step + 1) % self.sample_step == 0:
-                fake_svhn = self.g22.forward(fixed_svhn)
+                fake_svhn = self.g11.forward(fixed_svhn, svhn=True)
                 svhn, fake_svhn = self.to_data(fixed_svhn), self.to_data(fake_svhn)
 
                 merged = self.merge_images(svhn, fake_svhn)
@@ -232,7 +232,7 @@ class Solver(object):
 
             if (step + 1) % 10000 == 0:
                 # save the model parameters for each epoch
-                g22_path = os.path.join(self.model_path, 'g22-%d.pkl' % (step + 1))
+                g11_path = os.path.join(self.model_path, 'g11-%d.pkl' % (step + 1))
                 d2_path = os.path.join(self.model_path, 'd2-%d.pkl' % (step + 1))
-                torch.save(self.g22.state_dict(), g22_path)
+                torch.save(self.g11.state_dict(), g11_path)
                 torch.save(self.d2.state_dict(), d2_path)
