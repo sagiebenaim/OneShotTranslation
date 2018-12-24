@@ -109,9 +109,8 @@ class Solver(object):
             # ============ train D ============#
             # train with real images
             self.reset_grad()
-
-            fake_mnist = self.g22.forward(mnist, mnist=True)
-            out = self.d1(fake_mnist)
+            
+            out = self.d1(mnist)
             d1_loss = torch.mean((out - 1) ** 2)
 
             d_mnist_loss = d1_loss
@@ -180,8 +179,7 @@ class Solver(object):
             # train with real images
             self.reset_grad()
 
-            fake_svhn = self.g11.forward(svhn, svhn=True)
-            out = self.d2(fake_svhn)
+            out = self.d2(svhn)
             d2_loss = torch.mean((out - 1) ** 2)
 
             d_svhn_loss = d2_loss
