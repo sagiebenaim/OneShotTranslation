@@ -60,5 +60,14 @@ Additional scripts for other datasets are at ./drawing_and_style_transfer/script
 
 Options are at ./drawing_and_style_transfer/options
 
-
+## Reference
+If you found this code useful, please cite the following paper:
+```
+@inproceedings{Benaim2018OneShotUC,
+  title={One-Shot Unsupervised Cross Domain Translation},
+  author={Sagie Benaim and Lior Wolf},
+  booktitle={NeurIPS},
+  year={2018}
+}
+```
 
